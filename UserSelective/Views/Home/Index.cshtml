@@ -1,0 +1,52 @@
+﻿@model UserSelective.Models.ChatbotOptionsModel
+
+@{
+    ViewData["Title"] = "Chatbot";
+}
+
+<h2>Welcome to our chatbot!</h2>
+
+<form id="chatForm">
+    <label for="optionSelect">Select an option:</label>
+    <select id="optionSelect" asp-for="SelectedOption" name="SelectedOption" required>
+        <option value="" disabled selected>Select an option</option>
+        <option value="1">Need Answer</option>
+        <option value="2">Need Code</option>
+        <option value="3">Need Suggestion</option>
+    </select>
+    <br />
+    <label for="inputPrompt">Enter your prompt:</label>
+    <input type="text" asp-for="InputPrompt" id="inputPrompt" name="InputPrompt" required />
+    <br />
+    <input type="submit" value="Submit" />
+</form>
+
+<div id="chatLog">
+    <!-- Chat log will be displayed here -->
+</div>
+
+@section scripts {
+    <script>
+        // When the form is submitted, handle the request using JavaScript
+        document.getElementById("chatForm").onsubmit = async function (event) {
+            event.preventDefault(); // Prevent default form submission behavior
+
+            const formData = new FormData(document.getElementById("chatForm"));
+
+            const response = await fetch(`/Home/Get`, {
+                method: "POST", // Use the HTTP POST method
+                body: formData
+            });
+
+            if (response.ok) {
+                const responseData = await response.text();
+                document.getElementById("chatLog").innerHTML = responseData;
+            }
+        };
+
+        // Clear the chat log when selecting a new option
+        document.getElementById("optionSelect").onchange = function () {
+            document.getElementById("chatLog").innerHTML = '';
+        };
+    </script>
+}
